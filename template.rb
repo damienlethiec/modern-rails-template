@@ -6,7 +6,13 @@ def apply_template!
   # temporal fix bootsnap bug
   comment_lines 'config/boot.rb', /bootsnap/
 
-  run('rails db:create db:migrate')
+  template 'README.md.tt', force: true
+
+  run 'rails db:create db:migrate'
+
+  git flow: 'init -d'
+  git add: '.'
+  git commit: "Initial commit for #{app_name}"
 end
 
 def assert_minimum_rails_version
