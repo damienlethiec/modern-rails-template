@@ -5,7 +5,6 @@ def apply_template!
 
   # temporal fix bootsnap bug
   copy_file 'config/boot.rb', force: true
-  run('rails webpacker:install')
 
   run('rails db:migrate')
 end
