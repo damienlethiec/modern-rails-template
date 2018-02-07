@@ -1,7 +1,13 @@
-RAILS_REQUIREMENT = ">= 5.1.0"
+RAILS_REQUIREMENT = ">= 5.2.0.rc1"
 
 def apply_template!
   assert_minimum_rails_version
+
+  # temporal fix bootsnap bug
+  copy_file 'config/boot.rb', force: true
+  run('rails webpacker:install')
+
+  run('rails db:migrate')
 end
 
 def assert_minimum_rails_version
