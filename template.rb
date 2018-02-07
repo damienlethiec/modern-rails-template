@@ -8,13 +8,15 @@ def apply_template!
 
   template 'README.md.tt', force: true
 
+  template "ruby-version.tt", ".ruby-version"
+
   after_bundle do
     run 'rails db:create db:migrate'
 
     git flow: 'init -d'
 
     git add: '.'
-    git commit: '-m "Initial commit for #{app_name}"'
+    git commit: '-m "End of the template generation'
   end
 end
 
