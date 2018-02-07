@@ -4,10 +4,9 @@ def apply_template!
   assert_minimum_rails_version
 
   # temporal fix bootsnap bug
-  copy_file 'config/boot.rb', force: true
-  run('rails webpacker:install')
+  comment_lines 'config/boot.rb', /bootsnap/
 
-  run('rails db:migrate')
+  run('rails db:create db:migrate')
 end
 
 def assert_minimum_rails_version
