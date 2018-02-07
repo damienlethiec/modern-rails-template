@@ -8,11 +8,14 @@ def apply_template!
 
   template 'README.md.tt', force: true
 
-  run 'rails db:create db:migrate'
+  after_bundle do
+    run 'rails db:create db:migrate'
 
-  git flow: 'init -d'
-  git add: '.'
-  git commit: "Initial commit for #{app_name}"
+    git flow: 'init -d'
+
+    git add: '.'
+    git commit: '-m "Initial commit for #{app_name}"'
+  end
 end
 
 def assert_minimum_rails_version
