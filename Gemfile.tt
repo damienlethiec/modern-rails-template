@@ -17,6 +17,8 @@ gem 'turbolinks'<%= gemfile_requirement('turbolinks') %>
 
 gem 'bootsnap', '>= 1.1.0', require: false
 
+gem 'rails-i18n'
+
 gem 'friendly_id'
 
 group :development, :test do

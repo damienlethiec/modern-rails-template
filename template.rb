@@ -11,36 +11,20 @@ def apply_template!
   comment_lines 'config/boot.rb', /bootsnap/
 
   template "Gemfile.tt", force: true
-
   template 'README.md.tt', force: true
+  apply "config/template.rb"
+  copy_file 'app/controllers/application_controller.rb', force: true
+  copy_file 'Procfile'
 
   after_bundle do
-    # temporal fix bug friendly_id generator
-    copy_file 'db/migrate/20180208061509_create_friendly_id_slugs.rb'
-    run 'rails g annotate:install'
-    insert_into_file 'config/environments/development.rb', before: /^end/ do
-      <<-RUBY
-  Bullet.enable = true
-  Bullet.alert = true
-      RUBY
-    end
-    run 'rails g erd:install'
-
-    copy_file 'Procfile'
-    copy_file 'config/initializers/generators.rb'
-    insert_into_file 'config/environments/development.rb', after: /config\.action_mailer\.raise_delivery_errors = false\n/ do
-      <<-RUBY
-  config.action_mailer.default_url_options = { :host => "localhost:3000" }
-  config.action_mailer.asset_host = "http://localhost:3000"
-      RUBY
-    end
+    # gems configs
+    config_gems
+    install_optional_gems
+    config_optional_gems
 
     run 'rails db:create db:migrate'
 
-    append_to_file '.gitignore', 'erd.pdf'
-    git flow: 'init -d'
-    git add: '.'
-    git commit: '-m "End of the template generation"'
+    setup_git
   end
 end
 
@@ -53,7 +37,6 @@ def assert_minimum_rails_version
            "You are using #{rails_version}. Continue anyway?"
   exit 1 if no?(prompt)
 end
-
 
 # Add this template directory to source_paths so that Thor actions like
 # copy_file and template resolve against our source files. If this file was
@@ -77,6 +60,59 @@ def gemfile_requirement(name)
   @original_gemfile ||= IO.read("Gemfile")
   req = @original_gemfile[/gem\s+['"]#{name}['"]\s*(,[><~= \t\d\.\w'"]*)?.*$/, 1]
   req && req.gsub("'", %(")).strip.sub(/^,\s*"/, ', "')
+end
+
+def config_gems
+  config_friendly_id
+  config_annotate
+  config_bullet
+  config_erd
+end
+
+def config_friendly_id
+  # temporal fix bug friendly_id generator
+  copy_file 'db/migrate/20180208061509_create_friendly_id_slugs.rb'
+end
+
+def config_annotate
+  run 'rails g annotate:install'
+end
+
+def config_bullet
+  insert_into_file 'config/environments/development.rb', before: /^end/ do
+    <<-RUBY
+  Bullet.enable = true
+  Bullet.alert = true
+    RUBY
+  end
+end
+
+def config_erd
+  run 'rails g erd:install'
+  append_to_file '.gitignore', 'erd.pdf'
+end
+
+def install_optional_gems
+  add_haml?
+  run 'bundle install'
+end
+
+def add_haml?
+  @haml = yes?('Do you want to use Haml instead of EBR?')
+  if @haml
+    insert_into_file 'Gemfile', "gem 'haml'\n", after: /'friendly_id'\n/
+    insert_into_file 'Gemfile', "gem 'haml-rails'\n", after: /'friendly_id'\n/
+  end
+end
+
+def config_optional_gems
+  run 'rake haml:erb2haml' if @haml
+end
+
+def setup_git
+  git flow: 'init -d'
+  git add: '.'
+  git commit: '-m "End of the template generation"'
 end
 
 run 'pgrep spring | xargs kill -9'
