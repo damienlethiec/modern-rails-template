@@ -1,4 +1,5 @@
 copy_file 'config/initializers/generators.rb'
+copy_file 'config/routes.rb', force: true
 
 insert_into_file 'config/environments/development.rb', after: /config\.action_mailer\.raise_delivery_errors = false\n/ do
   <<-RUBY

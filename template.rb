@@ -12,8 +12,8 @@ def apply_template!
 
   template "Gemfile.tt", force: true
   template 'README.md.tt', force: true
-  apply "config/template.rb"
-  copy_file 'app/controllers/application_controller.rb', force: true
+  apply 'config/template.rb'
+  apply 'app/template.rb'
   copy_file 'Procfile'
 
   after_bundle do
@@ -21,6 +21,8 @@ def apply_template!
     config_gems
     install_optional_gems
     config_optional_gems
+
+    setup_front_end
 
     run 'rails db:create db:migrate'
 
@@ -107,6 +109,10 @@ end
 
 def config_optional_gems
   run 'rake haml:erb2haml' if @haml
+end
+
+def setup_front_end
+  copy_file '.browserslistrc'
 end
 
 def setup_git
