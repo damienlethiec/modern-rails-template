@@ -7,7 +7,7 @@ def apply_template!
   assert_minimum_rails_version
   add_template_repository_to_source_path
 
-  # temporal fix bootsnap bug
+  # temporary fix bootsnap bug
   comment_lines 'config/boot.rb', /bootsnap/
 
   template "Gemfile.tt", force: true
@@ -17,12 +17,12 @@ def apply_template!
   copy_file 'Procfile'
 
   after_bundle do
-    # gems configs
-    config_gems
+    setup_gems
     install_optional_gems
-    config_optional_gems
+    setup_optional_gems
 
     setup_front_end
+    optional_options_front_end
 
     run 'rails db:create db:migrate'
 
@@ -64,23 +64,23 @@ def gemfile_requirement(name)
   req && req.gsub("'", %(")).strip.sub(/^,\s*"/, ', "')
 end
 
-def config_gems
-  config_friendly_id
-  config_annotate
-  config_bullet
-  config_erd
+def setup_gems
+  setup_friendly_id
+  setup_annotate
+  setup_bullet
+  setup_erd
 end
 
-def config_friendly_id
+def setup_friendly_id
   # temporal fix bug friendly_id generator
   copy_file 'db/migrate/20180208061509_create_friendly_id_slugs.rb'
 end
 
-def config_annotate
+def setup_annotate
   run 'rails g annotate:install'
 end
 
-def config_bullet
+def setup_bullet
   insert_into_file 'config/environments/development.rb', before: /^end/ do
     <<-RUBY
   Bullet.enable = true
@@ -89,7 +89,7 @@ def config_bullet
   end
 end
 
-def config_erd
+def setup_erd
   run 'rails g erd:install'
   append_to_file '.gitignore', 'erd.pdf'
 end
@@ -107,12 +107,29 @@ def add_haml?
   end
 end
 
-def config_optional_gems
+def setup_optional_gems
   run 'rake haml:erb2haml' if @haml
 end
 
 def setup_front_end
   copy_file '.browserslistrc'
+  copy_file 'app/assets/stylesheets/application.scss'
+  remove_file 'app/assets/stylesheets/application.ccs'
+end
+
+def optional_options_front_end
+  @fancy_front_end = yes?('Do you want to use a super fancy front-end setup from the future?')
+  if @fancy_front_end
+    remove_uneeded_stuff
+  end
+end
+
+def remove_uneeded_stuff
+  comment_lines 'config/application.rb', /sprockets/
+  comment_lines 'Gemfile', /uglifier/
+  comment_lines 'Gemfile', /sass/
+  run 'bundle install'
+  FileUtils.rm_rf('app/assets')
 end
 
 def setup_git
