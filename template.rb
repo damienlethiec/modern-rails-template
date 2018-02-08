@@ -121,15 +121,25 @@ def optional_options_front_end
   @fancy_front_end = yes?('Do you want to use a super fancy front-end setup from the future?')
   if @fancy_front_end
     remove_uneeded_stuff
+    add_fancy_setup
   end
 end
 
 def remove_uneeded_stuff
-  comment_lines 'config/application.rb', /sprockets/
+  insert_into_file 'config/application.rb', "config.assets.enabled = false\n", after: /system_tests = nil\n/
   comment_lines 'Gemfile', /uglifier/
   comment_lines 'Gemfile', /sass/
   run 'bundle install'
   FileUtils.rm_rf('app/assets')
+end
+
+def add_fancy_setup
+  FileUtils.mv 'app/javascript', 'frontend'
+  gsub_file 'app/views/layouts/application.html.haml', 'javascript_include_tag', 'javascript_pack_tag'
+  gsub_file 'app/views/layouts/application.html.haml', 'stylesheet_link_tag', 'stylesheet_pack_tag'
+  gsub_file 'config/webpacker.yml', 'app/javascript', 'frontend'
+  insert_into_file 'app/controllers/application_controller.rb', "  prepend_view_path Rails.root.join('frontend')\n", after: /exception\n/
+  append_to_file 'Procfile', "assets: bin/webpack-dev-server\n"
 end
 
 def setup_git
