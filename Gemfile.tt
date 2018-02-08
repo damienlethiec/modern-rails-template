@@ -1,0 +1,42 @@
+source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+
+ruby '<%= RUBY_VERSION %>'
+
+gem 'pg'<%= gemfile_requirement('pg') %>
+gem 'puma'<%= gemfile_requirement('puma') %>
+gem 'rails', '<%= Rails.version %>'
+gem 'sass-rails'<%= gemfile_requirement('sass-rails') %>
+
+gem 'uglifier'<%= gemfile_requirement('uglifier') %>
+gem 'webpacker'
+
+gem 'jbuilder'<%= gemfile_requirement('jbuilder') %>
+gem 'redis'<%= gemfile_requirement('redis') %>
+gem 'turbolinks'<%= gemfile_requirement('turbolinks') %>
+
+gem 'bootsnap', '>= 1.1.0', require: false
+
+gem 'friendly_id'
+
+group :development, :test do
+  gem 'pry-byebug'
+  gem 'pry-rails'
+end
+
+group :development do
+  gem 'listen'<%= gemfile_requirement('listen') %>
+  gem 'spring'
+  gem 'spring-watcher-listen'<%= gemfile_requirement('spring-watcher-listen') %>
+
+  gem 'annotate'
+  gem 'awesome_print'
+  gem 'bullet'
+  gem 'rails-erd'
+  gem 'table_print'
+  gem 'xray-rails'
+
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'web-console'<%= gemfile_requirement('web-console') %>
+end

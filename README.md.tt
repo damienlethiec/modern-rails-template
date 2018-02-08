@@ -4,4 +4,4 @@ This is a Rails <%= Rails::VERSION::MAJOR %> app.
 
 ## Documentation
 
-Use [gitflow](https://github.com/nvie/gitflow)
+Use [gitflow](https://github.com/nvie/gitflow), more info [here](http://nvie.com/posts/a-successful-git-branching-model/)
