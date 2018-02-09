@@ -134,17 +134,18 @@ def remove_uneeded_stuff
   comment_lines 'Gemfile', /uglifier/
   comment_lines 'Gemfile', /sass/
   run 'bundle install'
-  FileUtils.rm_rf('app/assets')
+  FileUtils.rm_rf 'app/assets'
 end
 
 def add_fancy_setup
-  FileUtils.mv 'app/javascript', 'frontend'
-  create_file "frontend/packs/application.css"
-  insert_into_file 'frontend/packs/application.js', "import './application.css';\n", after: /application.html.erb\n/
+  FileUtils.rm_rf 'app/javascript'
+  apply 'frontend/template.rb'
   gsub_file 'app/views/layouts/application.html.erb', "<%= javascript_include_tag 'application' %>\n", ''
   gsub_file 'app/views/layouts/application.html.erb', 'stylesheet_link_tag', 'stylesheet_pack_tag'
   gsub_file 'config/webpacker.yml', 'app/javascript', 'frontend'
   insert_into_file 'app/controllers/application_controller.rb', "  prepend_view_path Rails.root.join('frontend')\n", after: /exception\n/
+  copy_file 'app/helpers/application_helper.rb'
+  copy_file 'lib/generators/component_generator.rb'
   append_to_file 'Procfile', "assets: bin/webpack-dev-server\n"
 end
 

@@ -1,0 +1,6 @@
+copy_file 'frontend/packs/application.js'
+copy_file 'frontend/init/index.js'
+copy_file 'frontend/init/index.css'
+copy_file 'frontend/components/page/page.js'
+copy_file 'frontend/components/page/_page.html.erb'
+copy_file 'frontend/components/page/page.css'
