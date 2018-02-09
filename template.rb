@@ -18,11 +18,15 @@ def apply_template!
 
   after_bundle do
     setup_gems
-    install_optional_gems
-    setup_optional_gems
 
     setup_front_end
     optional_options_front_end
+    setup_npm_packages
+
+    install_optional_gems
+    setup_optional_gems
+
+    run 'bundle binstubs bundler --force'
 
     run 'rails db:create db:migrate'
 
@@ -135,11 +139,21 @@ end
 
 def add_fancy_setup
   FileUtils.mv 'app/javascript', 'frontend'
-  gsub_file 'app/views/layouts/application.html.haml', 'javascript_include_tag', 'javascript_pack_tag'
-  gsub_file 'app/views/layouts/application.html.haml', 'stylesheet_link_tag', 'stylesheet_pack_tag'
+  create_file "frontend/packs/application.css"
+  insert_into_file 'frontend/packs/application.js', "import './application.css';\n", after: /application.html.erb\n/
+  gsub_file 'app/views/layouts/application.html.erb', "<%= javascript_include_tag 'application' %>\n", ''
+  gsub_file 'app/views/layouts/application.html.erb', 'stylesheet_link_tag', 'stylesheet_pack_tag'
   gsub_file 'config/webpacker.yml', 'app/javascript', 'frontend'
   insert_into_file 'app/controllers/application_controller.rb', "  prepend_view_path Rails.root.join('frontend')\n", after: /exception\n/
   append_to_file 'Procfile', "assets: bin/webpack-dev-server\n"
+end
+
+def setup_npm_packages
+  run 'yarn add eslint babel-eslint eslint-config-airbnb-base eslint-config-prettier eslint-import-resolver-webpack eslint-plugin-import eslint-plugin-prettier lint-staged pre-commit prettier stylelint stylelint-config-standard--dev'
+  copy_file '.eslintrc'
+  copy_file '.stylelintrc'
+  run 'yarn add normalize.css'
+  run 'yarn install'
 end
 
 def setup_git
