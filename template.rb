@@ -16,15 +16,14 @@ def apply_template!
   apply 'app/template.rb'
   copy_file 'Procfile'
 
+  install_optional_gems
+
+  setup_front_end
+  optional_options_front_end
+  setup_npm_packages
+
   after_bundle do
     setup_gems
-
-    setup_front_end
-    optional_options_front_end
-    setup_npm_packages
-
-    install_optional_gems
-    setup_optional_gems
 
     run 'bundle binstubs bundler --force'
 
@@ -73,6 +72,7 @@ def setup_gems
   setup_annotate
   setup_bullet
   setup_erd
+  setup_komponent if @komponent
 end
 
 def setup_friendly_id
@@ -98,63 +98,63 @@ def setup_erd
   append_to_file '.gitignore', 'erd.pdf'
 end
 
+def setup_komponent
+  run 'rails g komponent:install --stimulus'
+  insert_into_file 'config/initializers/generators.rb', "  g.komponent stimulus: true, locale: true\n", after: /uuid\n/
+  FileUtils.rm_rf 'app/javascript'
+  insert_into_file 'app/controllers/application_controller.rb', "  prepend_view_path Rails.root.join('frontend')\n", after: /exception\n/
+  append_to_file 'Procfile', "assets: bin/webpack-dev-server\n"
+end
+
 def install_optional_gems
   add_haml?
-  run 'bundle install'
 end
 
 def add_haml?
-  @haml = yes?('Do you want to use Haml instead of EBR?')
-  if @haml
+  if yes?('Do you want to use Haml instead of EBR?')
     insert_into_file 'Gemfile', "gem 'haml'\n", after: /'friendly_id'\n/
     insert_into_file 'Gemfile', "gem 'haml-rails'\n", after: /'friendly_id'\n/
+    run 'rake haml:erb2haml'
   end
-end
-
-def setup_optional_gems
-  run 'rake haml:erb2haml' if @haml
 end
 
 def setup_front_end
   copy_file '.browserslistrc'
   copy_file 'app/assets/stylesheets/application.scss'
-  remove_file 'app/assets/stylesheets/application.ccs'
+  remove_file 'app/assets/stylesheets/application.css'
+  create_file 'app/javascript/packs/application.scss'
 end
 
 def optional_options_front_end
-  @fancy_front_end = yes?('Do you want to use a super fancy front-end setup from the future?')
-  if @fancy_front_end
-    remove_uneeded_stuff
-    add_fancy_setup
+  add_component_based_design
+  add_css_framework
+end
+
+def add_component_based_design
+  @komponent = yes?('Do you want to adopt a component based design for your front-end?')
+  if @komponent
+    insert_into_file 'Gemfile', "gem 'komponent'\n", after: /'friendly_id'\n/
   end
 end
 
-def remove_uneeded_stuff
-  insert_into_file 'config/application.rb', "config.assets.enabled = false\n", after: /system_tests = nil\n/
-  comment_lines 'Gemfile', /uglifier/
-  comment_lines 'Gemfile', /sass/
-  run 'bundle install'
-  FileUtils.rm_rf 'app/assets'
-end
-
-def add_fancy_setup
-  FileUtils.rm_rf 'app/javascript'
-  apply 'frontend/template.rb'
-  gsub_file 'app/views/layouts/application.html.erb', "<%= javascript_include_tag 'application' %>\n", ''
-  gsub_file 'app/views/layouts/application.html.erb', 'stylesheet_link_tag', 'stylesheet_pack_tag'
-  gsub_file 'config/webpacker.yml', 'app/javascript', 'frontend'
-  insert_into_file 'app/controllers/application_controller.rb', "  prepend_view_path Rails.root.join('frontend')\n", after: /exception\n/
-  copy_file 'app/helpers/application_helper.rb'
-  copy_file 'lib/generators/component_generator.rb'
-  append_to_file 'Procfile', "assets: bin/webpack-dev-server\n"
-end
-
 def setup_npm_packages
-  run 'yarn add eslint babel-eslint eslint-config-airbnb-base eslint-config-prettier eslint-import-resolver-webpack eslint-plugin-import eslint-plugin-prettier lint-staged pre-commit prettier stylelint stylelint-config-standard--dev'
+  add_linters
+end
+
+def add_linters
+  run 'yarn add eslint babel-eslint eslint-config-airbnb-base eslint-config-prettier eslint-import-resolver-webpack eslint-plugin-import eslint-plugin-prettier lint-staged prettier stylelint stylelint-config-standard --dev'
   copy_file '.eslintrc'
   copy_file '.stylelintrc'
   run 'yarn add normalize.css'
-  run 'yarn install'
+end
+
+def add_css_framework
+  if yes?('Do you want to use Tailwind as a CSS framework?')
+    run 'yarn add tailwind'
+    run './node_modules/.bin/tailwind init frontend/init/css/tailwind.js'
+    # copy_file 'frontend/init/css/application.'
+    # append_to_file 'front/init/index.js', "import './css/tailwind.js';\n"
+  end
 end
 
 def setup_git
