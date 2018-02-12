@@ -89,8 +89,8 @@ def setup_gems
   setup_erd
   setup_sidekiq
   setup_komponent if @komponent
-  setup_haml if @haml
   setup_devise if @devise
+  setup_haml if @haml
 end
 
 def setup_friendly_id
@@ -179,6 +179,7 @@ end
 
 def setup_front_end
   copy_file '.browserslistrc'
+  copy_file 'app/assets/stylesheets/application.scss'
   remove_file 'app/assets/stylesheets/application.css'
 end
 
