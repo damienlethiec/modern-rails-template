@@ -21,6 +21,8 @@ def apply_template!
   install_optional_gems
 
   after_bundle do
+    setup_uuid
+
     setup_front_end
     setup_npm_packages
     optional_options_front_end
@@ -70,9 +72,14 @@ def gemfile_requirement(name)
 end
 
 def ask_optional_options
+  @devise = yes?('Do you want to implement authentication in your app with the devise gem?')
   @haml = yes?('Do you want to use Haml instead of EBR?')
   @komponent = yes?('Do you want to adopt a component based design for your front-end?')
   @tailwind = yes?('Do you want to use Tailwind as a CSS framework?')
+end
+
+def setup_uuid
+  copy_file 'db/migrate/20180208061510_enable_pg_crypto_extension.rb'
 end
 
 def setup_gems
@@ -80,7 +87,10 @@ def setup_gems
   setup_annotate
   setup_bullet
   setup_erd
+  setup_sidekiq
   setup_komponent if @komponent
+  setup_haml if @haml
+  setup_devise if @devise
 end
 
 def setup_friendly_id
@@ -90,6 +100,7 @@ end
 
 def setup_annotate
   run 'rails g annotate:install'
+  run 'bundle binstubs annotate'
 end
 
 def setup_bullet
@@ -106,31 +117,69 @@ def setup_erd
   append_to_file '.gitignore', 'erd.pdf'
 end
 
+def setup_sidekiq
+  run 'bundle binstubs annotate'
+end
+
 def setup_komponent
-  run 'rails g komponent:install --stimulus'
-  insert_into_file 'config/initializers/generators.rb', "  g.komponent stimulus: true, locale: true\n", after: /uuid\n/
-  FileUtils.rm_rf 'app/javascript'
-  FileUtils.rm_rf 'app/assets'
-  insert_into_file 'app/controllers/application_controller.rb', "  prepend_view_path Rails.root.join('frontend')\n", after: /exception\n/
+  install_komponent
+  add_basic_components
   append_to_file 'Procfile', "assets: bin/webpack-dev-server\n"
 end
 
+def setup_haml
+  run 'HAML_RAILS_DELETE_ERB=true rake haml:erb2haml'
+end
+
+def setup_devise
+  run 'rails generate devise:install'
+  run 'rails g devise:i18n:views'
+  insert_into_file 'config/routes.rb', after: /draw do\n/ do
+    <<-RUBY
+  require "sidekiq/web"
+  mount Sidekiq::Web => '/sidekiq'
+    RUBY
+  end
+  insert_into_file 'config/initializers/devise.rb', "  config.secret_key = Rails.application.credentials.secret_key_base\n", before: /^end/
+  run 'rails g devise User'
+  insert_into_file 'app/controllers/application_controller.rb', "  before_action :authenticate_user!\n", after: /exception\n/
+  insert_into_file 'app/controllers/pages_controller.rb', "  skip_before_action :authenticate_user!, only: :home\n", after: /ApplicationController\n/
+end
+
+def install_komponent
+  run 'rails g komponent:install --stimulus'
+  insert_into_file 'config/initializers/generators.rb', "  g.komponent stimulus: true, locale: true\n", after: /uuid\n/
+  FileUtils.rm_rf 'app/javascript'
+  insert_into_file 'app/controllers/application_controller.rb', "  prepend_view_path Rails.root.join('frontend')\n", after: /exception\n/
+end
+
+def add_basic_components
+  run 'rails g component flash'
+  insert_into_file 'app/views/layouts/application.html.erb', "    <%= component 'flash' %>\n", after: /<body>\n/
+  run 'rails g component button'
+  run 'rails g component card'
+  run 'rails g component form'
+end
+
 def install_optional_gems
-  add_haml if @haml
+  add_devise if @devise
   add_komponent if @komponent
+  add_haml if @haml
 end
 
 def add_haml
   insert_into_file 'Gemfile', "gem 'haml'\n", after: /'friendly_id'\n/
-  insert_into_file 'Gemfile', "gem 'haml-rails'\n", after: /'friendly_id'\n/
-  run 'HAML_RAILS_DELETE_ERB=true rake haml:erb2haml'
+  insert_into_file 'Gemfile', "gem 'haml-rails', git: 'git://github.com/indirect/haml-rails.git'\n", after: /'friendly_id'\n/
+end
+
+def add_devise
+  insert_into_file 'Gemfile', "gem 'devise'\n", after: /'friendly_id'\n/
+  insert_into_file 'Gemfile', "gem 'devise-i18n'\n", after: /'friendly_id'\n/
 end
 
 def setup_front_end
   copy_file '.browserslistrc'
-  copy_file 'app/assets/stylesheets/application.scss'
   remove_file 'app/assets/stylesheets/application.css'
-  create_file 'app/javascript/packs/application.scss'
 end
 
 def optional_options_front_end
@@ -156,7 +205,7 @@ def add_css_framework
   run 'yarn add tailwindcss --dev'
   run './node_modules/.bin/tailwind init app/javascript/css/tailwind.js'
   copy_file 'app/javascript/css/application.css'
-  append_to_file 'app/javascript/packs/application.js', "import './css/tailwind.js';\n"
+  append_to_file 'app/javascript/packs/application.js', "import '../css/application.css';\n"
   if @komponent
     append_to_file '.postcssrc.yml', "  tailwindcss: './frontend/css/tailwind.js'"
   else
