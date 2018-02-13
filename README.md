@@ -23,7 +23,6 @@ To make this the default Rails application template on your system, create a `~/
 --skip-coffee
 --webpack
 -d postgresql
--T
 -m https://raw.githubusercontent.com/damienlethiec/modern-rails-template/master/template.rb
 ```
 
@@ -36,7 +35,6 @@ rails new blog \
   --skip-coffee \
   --webpack \
   -d postgresql \
-  -T \
   -m https://raw.githubusercontent.com/damienlethiec/modern-rails-template/master/template.rb
 ```
 

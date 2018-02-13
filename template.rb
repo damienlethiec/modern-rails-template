@@ -164,6 +164,7 @@ def setup_gems
   setup_rubocop
   setup_brakeman
   setup_guard
+  setup_rspec
   setup_komponent if @komponent
   setup_devise if @devise
   setup_pundit if @pundit
@@ -313,6 +314,10 @@ def setup_overcommit
   run 'overcommit --install'
   copy_file '.overcommit.yml', force: true
   run 'overcommit --sign'
+end
+
+def setup_rspec
+  run 'rails generate rspec:install'
 end
 
 run 'pgrep spring | xargs kill -9'
