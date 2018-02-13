@@ -78,7 +78,7 @@ Below is an extract of what this generator does. You can check all the features 
 * Add and configure the [sidekiq][] gem for background jobs. You can access the sidekiq dashboard in the app at `/sidekiq` (don't forget to limit its access in the routes if needed)
 * Add and configure [rubocop][] for style and [brakeman][] for security and add them to [overcommit][] git hooks
 * Add livereload for view and automatic bundle installs using [guard][], [guard-livereload][] and [guard-bundler][]
-* Add [better-error][] and [xray-rails][] for easier debugging
+* Add [better-errors][] and [xray-rails][] for easier debugging
 * Add [awesome-print][] and [table-print][] for easier exploration in the terminal
 * Setup git with [git-flow][]
 
@@ -90,7 +90,7 @@ When you launch a new rails app with the template, a few questions will be asked
 * If you also need authorization, [pundit][] can be added and configured too.
 * You can choose to use [Haml][] instead of `erb`
 * If you feel adventurous, you can choose to use the [komponent][] gem and build your front-end following the workflow describe in this great [article][]
-* You can include [tailwindcss] in your project. The configure is inspired by the following Gorails [episode][]
+* You can include [tailwindcss][] in your project. The configure is inspired by the following Gorails [episode][]
 * Finally, you can choose to create a Github repository for you project and push it directly.
 
 ## How does it work?
@@ -126,9 +126,9 @@ If you want to contribute, please have a look to the issues in this repository a
 [guard]: https://github.com/guard/guard
 [guard-livereload]: https://github.com/guard/guard-livereload
 [guard-bundler]: https://github.com/guard/guard-bundler
-[better_errors]: https://github.com/charliesome/better_errors
+[better-errors]: https://github.com/charliesome/better_errors
 [xray-rails]: https://github.com/brentd/xray-rails
-[awesome_print]: https://github.com/michaeldv/awesome_print
+[awesome-print]: https://github.com/michaeldv/awesome_print
 [table-print]: https://github.com/arches/table_print
 [git-flow]: https://github.com/nvie/gitflow
 [devise]: https://github.com/plataformatec/devise
@@ -136,4 +136,5 @@ If you want to contribute, please have a look to the issues in this repository a
 [haml]: http://haml.info/
 [komponent]: https://github.com/komposable/komponent
 [article]: https://evilmartians.com/chronicles/evil-front-part-1
+[tailwindcss]: tailwindcss.com
 [episode]: https://gorails.com/episodes/tailwind-css-framework-with-rails
