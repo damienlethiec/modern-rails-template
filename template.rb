@@ -301,9 +301,9 @@ def push_github
   @hub = run 'brew ls --versions hub'
   if @hub
     run 'hub create'
-    run 'hub browse'
     run 'git push origin master'
     run 'git push origin develop'
+    run 'hub browse'
   else
     puts 'You first need to install the hub command line tool'
   end
