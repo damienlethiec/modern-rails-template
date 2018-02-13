@@ -1,0 +1,21 @@
+Rails:
+  Enabled: true
+
+Metrics/LineLength:
+  Max: 100
+
+AllCops:
+  Exclude:
+    - db/migrate/*
+    - db/schema.rb
+    - bin/*
+    - node_modules/**/*
+
+Metrics/BlockLength:
+  Exclude:
+    - config/environments/development.rb
+
+Rails/Output:
+  Exclude:
+    - db/seeds.rb
+
