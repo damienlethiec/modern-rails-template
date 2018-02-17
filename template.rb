@@ -109,7 +109,7 @@ def add_haml
 end
 
 def add_komponent
-  insert_into_file 'Gemfile', "gem 'komponent', git: 'git://github.com/komposable/komponent.git'\n", after: /'friendly_id'\n/
+  insert_into_file 'Gemfile', "gem 'komponent'\n", after: /'friendly_id'\n/
 end
 
 
