@@ -80,7 +80,7 @@ end
 def ask_optional_options
   @devise = yes?('Do you want to implement authentication in your app with the Devise gem?')
   @pundit = yes?('Do you want to manage authorizations with Pundit?') if @devise
-  @uuid = yes?('Do you want to use UUID for active record primary')
+  @uuid = yes?('Do you want to use UUID for active record primary?')
   @haml = yes?('Do you want to use Haml instead of EBR?')
   @komponent = yes?('Do you want to adopt a component based design for your front-end?')
   @tailwind = yes?('Do you want to use Tailwind as a CSS framework?')
