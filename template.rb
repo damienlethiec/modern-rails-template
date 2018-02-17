@@ -23,7 +23,7 @@ def apply_template!
   install_optional_gems
 
   after_bundle do
-    setup_uuid
+    setup_uuid if @uuid
 
     setup_front_end
     setup_npm_packages
@@ -80,6 +80,7 @@ end
 def ask_optional_options
   @devise = yes?('Do you want to implement authentication in your app with the Devise gem?')
   @pundit = yes?('Do you want to manage authorizations with Pundit?') if @devise
+  @uuid = yes?('Do you want to use UUID for active record primary')
   @haml = yes?('Do you want to use Haml instead of EBR?')
   @komponent = yes?('Do you want to adopt a component based design for your front-end?')
   @tailwind = yes?('Do you want to use Tailwind as a CSS framework?')
@@ -115,6 +116,7 @@ end
 
 def setup_uuid
   copy_file 'db/migrate/20180208061510_enable_pg_crypto_extension.rb'
+  insert_into_file 'config/initializers/generators.rb', "  g.orm :active_record, primary_key_type: :uuid\n", after: /assets: false\n/
 end
 
 
@@ -228,7 +230,7 @@ end
 
 def install_komponent
   run 'rails g komponent:install --stimulus'
-  insert_into_file 'config/initializers/generators.rb', "  g.komponent stimulus: true, locale: true\n", after: /uuid\n/
+  insert_into_file 'config/initializers/generators.rb', "  g.komponent stimulus: true, locale: true\n", after: /assets: false\n/
   FileUtils.rm_rf 'app/javascript'
   insert_into_file 'app/controllers/application_controller.rb', "  prepend_view_path Rails.root.join('frontend')\n", after: /exception\n/
 end

@@ -69,7 +69,6 @@ Below is an extract of what this generator does. You can check all the features 
 * Improve the main layout (cf `app/views/layouts/application.haml.erb`) to include webpack in the asset pipeline
 * Create a basic PagesController to have something to show when the app launch
 * Add a [Procfile][] for dev and a Procfile for production to manage the different processes you need to manage in a modern web application.
-* Setup [UUID][] as the primary key for Active Record
 * Add Javascript ([ESLint][]) and CSS ([Stylelint][]) linters with webpack
 * Add and configure the [friendly_id][] gem for slugging
 * Add and configure the [annotate][] gem to add useful comments in our models
@@ -89,6 +88,7 @@ When you launch a new rails app with the template, a few questions will be asked
 * If you need authentication, the [devise][] gem can be added and configured directly
 * If you also need authorization, [pundit][] can be added and configured too.
 * You can choose to use [Haml][] instead of `erb`
+* You can decide to use [UUID][] as the primary key for Active Record
 * If you feel adventurous, you can choose to use the [komponent][] gem and build your front-end following the workflow describe in this great [article][]
 * You can include [tailwindcss][] in your project. The configure is inspired by the following Gorails [episode][]
 * Finally, you can choose to create a Github repository for you project and push it directly.
