@@ -80,6 +80,7 @@ end
 def ask_optional_options
   @devise = yes?('Do you want to implement authentication in your app with the Devise gem?')
   @pundit = yes?('Do you want to manage authorizations with Pundit?') if @devise
+  @letter_opener = yes?('Do you want to use Letter Opener Web to browse sent emails in development?')
   @uuid = yes?('Do you want to use UUID for active record primary?')
   @haml = yes?('Do you want to use Haml instead of EBR?')
   @komponent = yes?('Do you want to adopt a component based design for your front-end?')
@@ -90,6 +91,7 @@ end
 def install_optional_gems
   add_devise if @devise
   add_pundit if @pundit
+  add_letter_opener if @letter_opener
   add_komponent if @komponent
   add_haml if @haml
 end
@@ -101,6 +103,10 @@ end
 
 def add_pundit
   insert_into_file 'Gemfile', "gem 'pundit'\n", after: /'friendly_id'\n/
+end
+
+def add_letter_opener
+  insert_into_file 'Gemfile', "gem 'letter_opener_web'\n", after: /'web-console'\n/
 end
 
 def add_haml
@@ -169,6 +175,7 @@ def setup_gems
   setup_komponent if @komponent
   setup_devise if @devise
   setup_pundit if @pundit
+  setup_letter_opener if @letter_opener
   setup_haml if @haml
 end
 
@@ -285,6 +292,16 @@ def setup_pundit
   end
   run 'spring stop'
   run 'rails g pundit:install'
+end
+
+def setup_letter_opener
+  insert_into_file 'config/routes.rb', after: /draw do\n/ do
+    <<-RUBY
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+    RUBY
+  end
+
+  environment 'config.action_mailer.delivery_method = :letter_opener_web',  env: 'development'
 end
 
 def setup_haml

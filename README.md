@@ -87,6 +87,7 @@ When you launch a new rails app with the template, a few questions will be asked
 
 * If you need authentication, the [devise][] gem can be added and configured directly
 * If you also need authorization, [pundit][] can be added and configured too.
+* You can add [letter_opener_web][] to browse sent emails in development
 * You can choose to use [Haml][] instead of `erb`
 * You can decide to use [UUID][] as the primary key for Active Record
 * If you feel adventurous, you can choose to use the [komponent][] gem and build your front-end following the workflow describe in this great [article][]
@@ -138,3 +139,4 @@ If you want to contribute, please have a look to the issues in this repository a
 [article]: https://evilmartians.com/chronicles/evil-front-part-1
 [tailwindcss]: tailwindcss.com
 [episode]: https://gorails.com/episodes/tailwind-css-framework-with-rails
+[letter_opener_web]: https://github.com/fgrehm/letter_opener_web
