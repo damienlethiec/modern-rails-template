@@ -11,11 +11,38 @@ AllCops:
     - bin/*
     - node_modules/**/*
 
+Style/Documentation:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/StructInheritance:
+  Exclude:
+    - app/policies/*
+
+Rails/InverseOf:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     - config/environments/development.rb
+    - Guardfile
+    - lib/tasks/auto_annotate_models.rake
+    - config/initializers/simple_form_bootstrap.rb
+    - lib/tasks/*
+    - app/admin/*
+
+Layout/AlignHash:
+  Enabled: False
+
+GlobalVars:
+  AllowedVariables:
+    - $redis
 
 Rails/Output:
   Exclude:
     - db/seeds.rb
-

@@ -9,7 +9,7 @@ def apply_template!
   add_template_repository_to_source_path
 
   # temporary fix bootsnap bug
-  comment_lines 'config/boot.rb', /bootsnap/
+  # comment_lines 'config/boot.rb', /bootsnap/
 
   template "Gemfile.tt", force: true
   template 'README.md.tt', force: true
