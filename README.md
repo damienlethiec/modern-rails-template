@@ -110,7 +110,7 @@ If you want to contribute, please have a look to the issues in this repository a
 [thor]: https://github.com/erikhuda/thor
 [here]: https://github.com/mattbrictson/rails-template
 [contributions]: https://github.com/damienlethiec/modern-rails-template#contributing
-[procfile]: http://guides.rubyonrails.org/i18n.html
+[procfile]: https://devcenter.heroku.com/articles/procfile
 [i18n]: http://guides.rubyonrails.org/i18n.html
 [uuid]: https://lab.io/articles/2017/04/13/uuids-rails-5-1/
 [eslint]: https://eslint.org/
