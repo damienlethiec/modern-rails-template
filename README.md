@@ -136,5 +136,5 @@ If you want to contribute, please have a look to the issues in this repository a
 [haml]: http://haml.info/
 [komponent]: https://github.com/komposable/komponent
 [article]: https://evilmartians.com/chronicles/evil-front-part-1
-[tailwindcss]: tailwindcss.com
+[tailwindcss]: https://tailwindcss.com
 [episode]: https://gorails.com/episodes/tailwind-css-framework-with-rails
