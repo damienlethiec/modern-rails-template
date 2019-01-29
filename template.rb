@@ -2,7 +2,7 @@ require "fileutils"
 require "shellwords"
 require "tmpdir"
 
-RAILS_REQUIREMENT = ">= 5.2.0.rc1"
+RAILS_REQUIREMENT = ">= 5.2.2"
 
 def apply_template!
   assert_minimum_rails_version

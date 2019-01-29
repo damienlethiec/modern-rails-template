@@ -38,8 +38,6 @@ group :development do
   gem 'awesome_print'
   gem 'bullet'
   gem 'rails-erd'
-  gem 'table_print'
-  gem 'xray-rails'
 
   gem 'brakeman', require: false
   gem 'overcommit'
