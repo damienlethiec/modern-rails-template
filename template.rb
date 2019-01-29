@@ -294,7 +294,6 @@ end
 
 
 def setup_git
-  git flow: 'init -d'
   git add: '.'
   git commit: '-m "End of the template generation"'
 end

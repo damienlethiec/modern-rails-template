@@ -77,9 +77,8 @@ Below is an extract of what this generator does. You can check all the features 
 * Add and configure the [sidekiq][] gem for background jobs. You can access the sidekiq dashboard in the app at `/sidekiq` (don't forget to limit its access in the routes if needed)
 * Add and configure [rubocop][] for style and [brakeman][] for security and add them to [overcommit][] git hooks
 * Add livereload for view and automatic bundle installs using [guard][], [guard-livereload][] and [guard-bundler][]
-* Add [better-errors][] and [xray-rails][] for easier debugging
-* Add [awesome-print][] and [table-print][] for easier exploration in the terminal
-* Setup git with [git-flow][]
+* Add [better-errors][] for easier debugging
+* Add [awesome-print][] for easier exploration in the terminal
 
 ### Additional options
 
@@ -130,7 +129,6 @@ If you want to contribute, please have a look to the issues in this repository a
 [xray-rails]: https://github.com/brentd/xray-rails
 [awesome-print]: https://github.com/michaeldv/awesome_print
 [table-print]: https://github.com/arches/table_print
-[git-flow]: https://github.com/nvie/gitflow
 [devise]: https://github.com/plataformatec/devise
 [pundit]: https://github.com/varvet/pundit
 [haml]: http://haml.info/
